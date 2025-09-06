@@ -13,6 +13,7 @@
 
 # 测试java语法的文件，不需要
 /src/test/java/com/zjl/partnerservice/learn/javasyntax/*
+/src/test/java/com/zjl/partnerservice/dependency/*
 
 
 target/

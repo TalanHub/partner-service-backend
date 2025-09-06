@@ -2,6 +2,8 @@ package com.zjl.partnerservice.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.zjl.partnerservice.Constant.UserConstant;
 import com.zjl.partnerservice.common.ErrorCode;
 import com.zjl.partnerservice.exception.BussinessException;
@@ -13,10 +15,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
 * @author zhenglao
@@ -126,11 +133,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
 
         // 用户信息脱敏
-        User maskedUser = getMaskedUser(user);
-
-        // TODO: 记录登录态
+        User maskedUser = UserService.getMaskedUser(user);
+        // 关键：记录登录态
         request.getSession().setAttribute(UserConstant.USER_LOGIN_STATE, maskedUser);
-        
         //登陆成功
         return maskedUser;
     }
@@ -140,25 +145,66 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         request.getSession().removeAttribute(UserConstant.USER_LOGIN_STATE);
     }
 
+
+
+
     @Override
-    public User getMaskedUser(User originalUser) {
-        User maskedUser = new User();
-        maskedUser.setId(originalUser.getId());
-        maskedUser.setUsername(originalUser.getUsername());
-        maskedUser.setAge(originalUser.getAge());
-        maskedUser.setGender(originalUser.getGender());
-        maskedUser.setBirthday(originalUser.getBirthday());
-        maskedUser.setUserAccount(originalUser.getUserAccount());
-        maskedUser.setUserPassword("");
-        maskedUser.setEmail(originalUser.getEmail());
-        maskedUser.setPhoneNumber(originalUser.getPhoneNumber());
-        maskedUser.setAvatarUrl(originalUser.getAvatarUrl());
-        maskedUser.setUserRole(originalUser.getUserRole());
-        maskedUser.setUserStatus(originalUser.getUserStatus());
-        maskedUser.setCreateTime(originalUser.getCreateTime());
-        maskedUser.setTags(originalUser.getTags()); // 新添加的
-        return maskedUser;
+    public List<User> searchUsersByTagNames(List<String> tagNameList) {
+
+        List<User> resultUserList = new ArrayList<>();
+
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        List<User> userList = userMapper.selectList(queryWrapper); // 所有user对象
+        Gson gson = new Gson();
+        return userList.stream().filter(user -> {
+            String userTagNames = user.getTags();
+            if (StringUtils.isBlank(userTagNames)) {
+                return false;
+            }
+            Set<String> userTagNameSet = gson.fromJson(userTagNames, new TypeToken<Set<String>>(){}.getType());
+            for (String tagName : tagNameList) {
+                if (!userTagNameSet.contains(tagName)) {
+                    return false;
+                }
+            } // 循环结束，说明每个标签都有
+            return true; //
+        }).map(UserService::getMaskedUser).collect(Collectors.toList());
     }
+
+
+
+
+
+
+
+    /**
+     * 根据标签搜索用户 SQL版本
+     *
+     * @param tagNameList 标签名的列表
+     * @return 符合要求的用户
+     */
+    @Deprecated
+    private List<User> searchUsersByTagNamesBySQL(List<String> tagNameList) {
+        if (CollectionUtils.isEmpty(tagNameList)) {
+            throw new BussinessException(ErrorCode.PARAMS_ERROR, "输入的查询标签为空");
+        }
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        for (String tag : tagNameList) {
+            queryWrapper.like("tags", tag); // 拼接的结果为：like %tag1% and like %tag2"
+        }
+        List<User> userList = userMapper.selectList(queryWrapper);
+
+        return userList.stream().map(UserService::getMaskedUser).collect(Collectors.toList());
+
+    }
+
+
+
+
+
+
+
+
 }
 
 

@@ -60,4 +60,18 @@ public class UserMapperTest {
          */
     }
 
+
+
+    @Test
+    public void temTest() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id");
+        List<User> users = userMapper.selectList(queryWrapper);
+        System.out.println("查询结果如下：");
+        System.out.println("查询到的数量：" + users.size() + "个");
+//        System.out.println(users);
+        users.forEach(user -> {
+            System.out.println("ID: " + user.getId());
+        });
+    }
 }

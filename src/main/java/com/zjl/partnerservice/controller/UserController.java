@@ -94,7 +94,10 @@ public class UserController {
         queryWrapper.like("username", username);
 
         List<User> users = userService.list(queryWrapper);
-        List<User> maskedUsers = users.stream().map(user -> userService.getMaskedUser(user)).collect(Collectors.toList());
+
+
+        List<User> maskedUsers = users.stream().map(UserService::getMaskedUser).collect(Collectors.toList());
+//        List<User> maskedUsers = users.stream().map(user -> userService.getMaskedUser(user)).collect(Collectors.toList());
 
         return StdResponse.success(maskedUsers);
 

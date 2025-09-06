@@ -8,6 +8,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * 用户服务测试
@@ -102,4 +106,24 @@ public class UserServiceTest {
     }
 
 
+    @Test
+    void searchUsersByTags() {
+        System.out.println("测试方法开始运行：");
+        List<String> tagNamelist = Arrays.asList("游戏", "科技");
+        List<User> resultUsers = userService.searchUsersByTagNames(tagNamelist);
+        System.out.println("测试结果如下：");
+        System.out.println("符合要求的数量为：" + resultUsers.size() + "个");
+        System.out.println(resultUsers);
+    }
+
+//    @Test
+//    void searchUsersByTagNamesBySQL() {
+//        List<String> tagNamelist = Arrays.asList("游戏", "科技");
+//        List<User> resultUsers = userService.searchUsersByTagNamesBySQL(tagNamelist);
+//        System.out.println("测试结果如下：");
+//        System.out.println("符合要求的数量为：" + resultUsers.size() + "个");
+//        System.out.println(resultUsers);
+//
+//
+//    }
 }
