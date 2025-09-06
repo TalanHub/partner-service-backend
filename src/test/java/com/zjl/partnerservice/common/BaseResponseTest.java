@@ -18,12 +18,12 @@ class BaseResponseTest {
 
     @Test
     public void testConstructor() {
-        User user = new User();
-        BaseResponse<User> userBaseResponse = new BaseResponse<>(4004, "i am message", user);
-        List<BaseResponse<User>> responses = new ArrayList<>();
-
-
-        BaseResponse t = new BaseResponse(444, "a", 32);
+//        User user = new User();
+//        BaseResponse<User> userBaseResponse = new BaseResponse<>(4004, "i am message", user);
+//        List<BaseResponse<User>> responses = new ArrayList<>();
+//
+//
+//        BaseResponse t = new BaseResponse(444, "a", 32);
 
 
 

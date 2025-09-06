@@ -56,14 +56,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         // 账户能小于4位，密码不能小于8位
         if (userAccount.length() < 4 || userPassword.length() < 8) {
-            return -1;
+            throw new BussinessException(ErrorCode.PARAMS_ERROR, "账户能小于4位，密码不能小于8位");
         }
 
         // 账户不能包含特殊字符
         String invalidPattern = "[^a-zA-Z0-9]"; // 不属于字母数字的字符
         Matcher matcher = Pattern.compile(invalidPattern).matcher(userAccount);
         if (matcher.find()) { // 包含特殊字符
-            return -1;
+            throw new BussinessException(ErrorCode.PARAMS_ERROR, "账户不能包含特殊字符");
         }
 
         // 账户不能重复
@@ -71,7 +71,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         queryWrapper.eq("user_account", userAccount);
         long count = userMapper.selectCount(queryWrapper);
         if (count > 0) {
-            return -1;
+            throw new BussinessException(ErrorCode.PARAMS_ERROR, "你输入的用户账户已经重复了");
         }
 
         // 2.加密
@@ -111,7 +111,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         long count = userMapper.selectCount(queryWrapper);
         if (count == 0) {
             log.info("user doesn't exist");
-            return null;
+            String notFountMessage = "名为" + userAccount + "的用户不存在";
+            throw new BussinessException(ErrorCode.NOT_FOUND, notFountMessage);
         }
 
         // 密码先加密
@@ -155,7 +156,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         maskedUser.setUserRole(originalUser.getUserRole());
         maskedUser.setUserStatus(originalUser.getUserStatus());
         maskedUser.setCreateTime(originalUser.getCreateTime());
-
+        maskedUser.setTags(originalUser.getTags()); // 新添加的
         return maskedUser;
     }
 }
