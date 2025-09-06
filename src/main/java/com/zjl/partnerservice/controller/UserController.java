@@ -11,6 +11,8 @@ import com.zjl.partnerservice.model.domain.request.UserRegisterRequest;
 import com.zjl.partnerservice.model.domain.User;
 
 import com.zjl.partnerservice.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -27,13 +29,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
+@Tag(name = "用户接口", description = "用户相关操作接口")
 public class UserController {
 
 
     @Resource
     private UserService userService;
 
-
+    @Operation(summary = "用户登录")
     @PostMapping("/login")
     public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
@@ -50,6 +53,7 @@ public class UserController {
         return StdResponse.success(user);
     }
 
+    @Operation(summary = "用户注册")
     @PostMapping("/register")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
@@ -66,6 +70,8 @@ public class UserController {
     }
 
 
+
+    @Operation(summary = "用户登出")
     @GetMapping("/logout")
     public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
         if (request == null) {
@@ -77,8 +83,7 @@ public class UserController {
     }
 
 
-
-
+    @Operation(summary = "搜索用户（管理员）")
     @GetMapping("/search/{username}")
     public BaseResponse<List<User>> searchByName(@PathVariable String username, HttpServletRequest request) {
         // 鉴权
@@ -104,7 +109,7 @@ public class UserController {
     }
 
 
-
+    @Operation(summary = "删除用户（管理员）")
     @GetMapping("/delete")
     public BaseResponse<Boolean> deleteUserById(@RequestParam long id, HttpServletRequest request) {
         if (!isAdmin(request)) {
