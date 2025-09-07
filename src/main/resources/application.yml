@@ -31,6 +31,10 @@ spring:
 # ==================== 5. Web服务器配置 ====================
 server:
   port: 8080
+  servlet:
+    session:
+      cookie:
+        max-age: 2592000 # 30天 * 24小时 * 60分钟 * 60秒 = 2592000秒
   # servlet:
   #   context-path: /api
 

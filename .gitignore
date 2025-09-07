@@ -11,6 +11,11 @@
 /src/main/resources/application-*.properties
 
 
+# 测试用到文件，很快会删掉
+/src/main/java/com/zjl/partnerservice/controller/TempController.java
+
+
+
 # 测试java语法的文件，不需要
 /src/test/java/com/zjl/partnerservice/learn/javasyntax/*
 /src/test/java/com/zjl/partnerservice/dependency/*

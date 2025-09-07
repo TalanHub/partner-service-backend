@@ -5,6 +5,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+/**
+ * 用来测试session，很快会删掉
+ */
 @RestController
 public class TempController {
 
