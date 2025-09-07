@@ -97,7 +97,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
-
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             return null;
         }
@@ -112,9 +111,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_account", userAccount);
 
-        // 没有该用户
         long count = userMapper.selectCount(queryWrapper);
-        if (count == 0) {
+        if (count == 0) { // 没有该用户
             log.info("user doesn't exist");
             String notFountMessage = "名为" + userAccount + "的用户不存在";
             throw new BussinessException(ErrorCode.NOT_FOUND, notFountMessage);
@@ -148,11 +146,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public List<User> searchUsersByTagNames(List<String> tagNameList) {
-
-        List<User> resultUserList = new ArrayList<>();
-
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         List<User> userList = userMapper.selectList(queryWrapper); // 所有user对象
+
         Gson gson = new Gson();
         return userList.stream().filter(user -> {
             String userTagNames = user.getTags();

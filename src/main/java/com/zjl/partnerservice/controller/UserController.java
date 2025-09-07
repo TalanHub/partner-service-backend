@@ -116,8 +116,7 @@ public class UserController {
         if (id <= 0) {
             return StdResponse.error(ErrorCode.PARAMS_ERROR, "用户ID不能小于零。");
         }
-        Boolean resultBoolean =  userService.removeById(id);
-//        return new BaseResponse<>(500, "代码没写好，结果不确定，对不起", resultBoolean);
+        boolean resultBoolean =  userService.removeById(id);
         if (resultBoolean) {
             return StdResponse.success(true);
         } else {
@@ -140,13 +139,7 @@ public class UserController {
 
 
 
-
-
-
-
-
-
-
+    // ------------- 辅助方法：验证用户是否为管理员 -----------------------------------
 
     private boolean isAdmin(HttpServletRequest request) {
         Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
