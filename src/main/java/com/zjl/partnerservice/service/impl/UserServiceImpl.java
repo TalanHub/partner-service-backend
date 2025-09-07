@@ -52,13 +52,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 账户密码 不能为空
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
             throw new BussinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
-//            return -1;
         }
 
         // 两次输入的密码不相同
         if (!userPassword.equals(checkPassword)) {
             throw new BussinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不同");
-//            return -1;
         }
 
         // 账户能小于4位，密码不能小于8位
@@ -129,7 +127,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = userMapper.selectOne(queryWrapper);
         if (user == null) {
             log.info("user login failed, user password is incorrect");
-            return null;
+            throw new BussinessException(ErrorCode.USER_PASSWORD_ERROR, "密码错误！");
         }
 
         // 用户信息脱敏

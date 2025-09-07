@@ -84,7 +84,7 @@ public class UserController {
 
 
     @Operation(summary = "搜索用户（管理员）")
-    @GetMapping("/search/{username}")
+    @GetMapping("/search/username/{username}")
     public BaseResponse<List<User>> searchByName(@PathVariable String username, HttpServletRequest request) {
         // 鉴权
         if (!isAdmin(request)) {
@@ -102,10 +102,8 @@ public class UserController {
 
 
         List<User> maskedUsers = users.stream().map(UserService::getMaskedUser).collect(Collectors.toList());
-//        List<User> maskedUsers = users.stream().map(user -> userService.getMaskedUser(user)).collect(Collectors.toList());
 
         return StdResponse.success(maskedUsers);
-
     }
 
 
@@ -128,7 +126,25 @@ public class UserController {
 
     }
 
-    // TODO: 这些方法都可被润色，复杂的逻辑应该写在service里
+
+
+    @PostMapping("/search/tags")
+    public BaseResponse<List<User>> searchUsersByTagNames(@RequestBody List<String> tagNameList) {
+        if (tagNameList == null || tagNameList.isEmpty()) {
+            return StdResponse.error(ErrorCode.PARAMS_ERROR, "输入的请求参数为空");
+        }
+        List<User> userList = userService.searchUsersByTagNames(tagNameList);
+        return StdResponse.success(userList);
+    }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -137,4 +153,7 @@ public class UserController {
         User user = (User)userObj;
         return user != null && user.getUserRole() == UserConstant.ADMIN_ROLE;
     }
+
+
+    // TODO: 这些方法都可被润色，复杂的逻辑应该写在service里
 }
